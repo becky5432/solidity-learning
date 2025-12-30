@@ -1,6 +1,8 @@
 pragma solidity ^0.8.28;
 
 contract MyToken {
+    event Transfer(address indexed from, address indexed to, uint256 value);
+
     string public name;
     string public symbol;
     uint8 public decimals;
@@ -23,11 +25,14 @@ contract MyToken {
     function _mint(uint256 amount, address owner) internal {
         totalSupply += amount;
         balanceOf[owner] += amount;
+        emit Transfer(address(0), owner, amount);
     }
 
     function transfer(uint256 amount, address to) external {
         require(balanceOf[msg.sender] >= amount, "insufficient balance");
         balanceOf[msg.sender] -= amount;
         balanceOf[to] += amount;
+
+        emit Transfer(msg.sender, to, amount);
     }
 }
