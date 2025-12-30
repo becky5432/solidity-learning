@@ -12,7 +12,7 @@ contract MyToken {
         name = _name;
         symbol = _symbol;
         decimals = _decimal;
-        _mint(1000000000000000000, msg.sender);
+        _mint(1 * 10 ** uint256(decimals), msg.sender);
     }
 
     function _mint(uint256 amount, address owner) internal {
@@ -20,15 +20,8 @@ contract MyToken {
         balanceOf[owner] += amount;
     }
 
-    // function totalSupply() external view returns (unit256){
-    //     return totalSupply;
-    // }
-
-    // function balanceOf(address owner) external view returns (uint256) {
-    //     return balanceOf[owner];
-    // }
-
-    // function name() external vies returns (stirng memory) {
-    //     return name;
-    // }
+    function transfer(uint256 amount, address to) external {
+        balanceOf[msg.sender] -= amount;
+        balanceOf[to] += amount;
+    }
 }

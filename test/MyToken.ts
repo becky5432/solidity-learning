@@ -2,6 +2,7 @@ import hre from "hardhat";
 import { expect, should } from "chai";
 import { MyToken } from "../typechain-types";
 import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
+import { assertArgumentCount, parseUnits } from "ethers";
 
 describe("mytoken deploy", () => {
   let myTokenC: MyToken;
@@ -29,4 +30,9 @@ describe("mytoken deploy", () => {
   it("should return 1MT balance for signer 0", async () => {
     expect(await myTokenC.balanceOf(signers[0].address)).equal(1n * 10n ** 18n);
   });
+  it("should have 0.5MT", async () => {
+    const signer1 = signers[1]
+    await myTokenC.transfer(hre.ethers.parseUnits("0.5", 18), signer1.address);
+    expect(await myTokenC.balanceOf(signer1)).equal(hre.ethers.parseUnits("0.5", 18)
+  })
 });
