@@ -76,7 +76,10 @@ describe("My Token", () => {
       it("should emit Approval event", async () => {
         const signer1 = signers[1];
         await expect(
-          myTokenC.approve(signer1, hre.ethers.parseUnits("10", decimals))
+          myTokenC.approve(
+            signer1.address,
+            hre.ethers.parseUnits("10", decimals)
+          )
         )
           .to.emit(myTokenC, "Approval")
           .withArgs(signer1.address, hre.ethers.parseUnits("10", decimals));
@@ -93,6 +96,45 @@ describe("My Token", () => {
               hre.ethers.parseUnits("1", decimals)
             )
         ).to.be.revertedWith("insufficient allowance");
+      });
+      it("balance check after moving 1MT(HW)", async () => {
+        const signer0 = signers[0];
+        const signer1 = signers[1];
+        const amount = hre.ethers.parseUnits("1", decimals);
+
+        const s0_before = await myTokenC.balanceOf(signer0.address);
+        const s1_before = await myTokenC.balanceOf(signer1.address);
+
+        await myTokenC.approve(signer1.address, amount);
+
+        await expect(
+          myTokenC
+            .connect(signer1)
+            .transferFrom(signer0.address, signer1.address, amount)
+        )
+          .to.emit(myTokenC, "Transfer")
+          .withArgs(signer0.address, signer1.address, amount);
+
+        console.log(
+          "signer0 balance: ",
+          hre.ethers.formatUnits(
+            await myTokenC.balanceOf(signer0.address),
+            decimals
+          )
+        );
+        console.log(
+          "signer1 balance: ",
+          hre.ethers.formatUnits(
+            await myTokenC.balanceOf(signer1.address),
+            decimals
+          )
+        );
+        expect(await myTokenC.balanceOf(signer0.address)).equal(
+          s0_before - amount
+        );
+        expect(await myTokenC.balanceOf(signer1.address)).equal(
+          s1_before + amount
+        );
       });
     });
   });
