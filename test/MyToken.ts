@@ -1,6 +1,6 @@
 import hre from "hardhat";
 import { expect, should } from "chai";
-import { MyToken } from "../typechain-types";
+import { MyToken, TinyBank__factory } from "../typechain-types";
 import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { assertArgumentCount, parseUnits } from "ethers";
 import { extendConfig } from "hardhat/config";
@@ -39,6 +39,13 @@ describe("My Token", () => {
       expect(await myTokenC.balanceOf(signers[0].address)).equal(
         MINTING_AMOUNT * 10n ** DECIMALS
       );
+    });
+    it("should return or revert when minting infinitly", async () => {
+      const hacker = signers[2];
+      const mintingAgainAmount = hre.ethers.parseUnits("100", DECIMALS);
+      await expect(
+        myTokenC.connect(hacker).mint(mintingAgainAmount, hacker.address)
+      ).to.be.revertedWith("You are not authorized to manage this token");
     });
   });
   describe("Transfer", () => {
