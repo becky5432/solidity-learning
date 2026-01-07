@@ -56,7 +56,7 @@ describe("TinyBank", () => {
       expect(await tinyBankC.staked(signer0.address)).equal(0);
     });
   });
-  describe("reward", () => {
+  describe("Reward", () => {
     it("should reward 1MT every blocks", async () => {
       const signer0 = signers[0];
       const stakingAmount = hre.ethers.parseUnits("50", DECIMALS);
@@ -73,6 +73,14 @@ describe("TinyBank", () => {
       expect(await myTokenC.balanceOf(signer0.address)).equal(
         hre.ethers.parseUnits((BLOCKS + MINTING_AMOUNT + 1n).toString())
       );
+    });
+    it("Should rever when changing rewardPerBlock by hacker", async () => {
+      const hacker = signers[3];
+      const rewardToChange = hre.ethers.parseUnits("10000", DECIMALS);
+      await tinyBankC.setRewardPerBlock(rewardToChange);
+      await expect(
+        tinyBankC.connect(hacker).setRewardPerBlock(rewardToChange)
+      ).to.be.revertedWith("You are not authorized to manage this contract");
     });
   });
 });
