@@ -17,8 +17,14 @@ describe("TinyBank", () => {
       DECIMALS,
       MINTING_AMOUNT,
     ]);
+    const MANAGER_NUMBERS = 5;
+    const managers: string[] = [];
+    for (let i = 0; i < MANAGER_NUMBERS; i++) {
+      managers.push(signers[i].address);
+    }
     tinyBankC = await hre.ethers.deployContract("TinyBank", [
       await myTokenC.getAddress(),
+      managers,
     ]);
     await myTokenC.setManager(tinyBankC.getAddress());
   });
@@ -74,13 +80,18 @@ describe("TinyBank", () => {
         hre.ethers.parseUnits((BLOCKS + MINTING_AMOUNT + 1n).toString())
       );
     });
-    it("Should rever when changing rewardPerBlock by hacker", async () => {
-      const hacker = signers[3];
+    it("Should revert when changing rewardPerBlock by hacker", async () => {
+      const hacker = signers[7];
       const rewardToChange = hre.ethers.parseUnits("10000", DECIMALS);
-      await tinyBankC.setRewardPerBlock(rewardToChange);
       await expect(
         tinyBankC.connect(hacker).setRewardPerBlock(rewardToChange)
-      ).to.be.revertedWith("You are not authorized to manage this contract");
+      ).to.be.revertedWith("You are not a manager");
+    });
+    it("Should revert when not all managers confirmed yet", async () => {
+      const rewardToChange = hre.ethers.parseUnits("10000", DECIMALS);
+      await expect(
+        tinyBankC.connect(signers[0]).setRewardPerBlock(rewardToChange)
+      ).to.be.revertedWith("Not all confirmed yet");
     });
   });
 });
