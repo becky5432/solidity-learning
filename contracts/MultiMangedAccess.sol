@@ -14,10 +14,10 @@ abstract contract MultiManagedAccess {
         }
     }
 
-    modifier onlyOwner() {
-        require(msg.sender == owner, "You are not authorized");
-        _;
-    }
+    // modifier onlyOwner() {
+    //     require(msg.sender == owner, "You are not authorized");
+    //     _;
+    // }
 
     function allConfirmed() internal view returns (bool) {
         for (uint i = 0; i < MANAGER_NUMBERS; i++) {
