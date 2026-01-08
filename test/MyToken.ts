@@ -120,20 +120,20 @@ describe("My Token", () => {
           .to.emit(myTokenC, "Transfer")
           .withArgs(signer0.address, signer1.address, amount);
 
-        console.log(
-          "signer0 balance: ",
-          hre.ethers.formatUnits(
-            await myTokenC.balanceOf(signer0.address),
-            DECIMALS
-          )
-        );
-        console.log(
-          "signer1 balance: ",
-          hre.ethers.formatUnits(
-            await myTokenC.balanceOf(signer1.address),
-            DECIMALS
-          )
-        );
+        // console.log(
+        //   "signer0 balance: ",
+        //   hre.ethers.formatUnits(
+        //     await myTokenC.balanceOf(signer0.address),
+        //     DECIMALS
+        //   )
+        // );
+        // console.log(
+        //   "signer1 balance: ",
+        //   hre.ethers.formatUnits(
+        //     await myTokenC.balanceOf(signer1.address),
+        //     DECIMALS
+        //   )
+        // );
         expect(await myTokenC.balanceOf(signer0.address)).equal(
           s0_before - amount
         );
